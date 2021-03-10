@@ -1,0 +1,364 @@
+{
+	"info": {
+		"_postman_id": "c2f28eb3-25f0-4abc-9745-82ba024d4746",
+		"name": "APIChaining",
+		"description": "Pre-condition:For Authorisation basic auth:\r\nusername:\r\npassword:\r\nPass the {{Username1}} as variable in the QA environment. \r\nCheckr Base Url:https://api.checkr.com\r\nTest Scenarios:\r\n01 creating candidateId by post request\r\n02 creating candidate Report Id to get all the ids to pass in checkr api's for background check.(postcall)\r\n03 To get the report URL from get call passing Report Id\r\n04 To get the information for SSN_object_traces from get call by passing SSN_Id\r\n05 To get the information for Sex_offender from get call by passing Sex_offender_Id\r\n06 To get the information for global_watch_list from get call by passing Global_watch_Id.\r\n07 To get the information for National_crime_search from get call by passing national_criminal_Id",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Post",
+			"item": [
+				{
+					"name": "GenerateCandateID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"bodyData=JSON.parse(responseBody)",
+									"value=bodyData.id",
+									"console.log(value)",
+									"",
+									"pm.environment.set(\"pass-candidate-id\", value);",
+									"test[\"Contains candidate id\"]=responseBody.has(data.pass-candidate-id)"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "{{Password1}}",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{Username1}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "216af8046659e9b213541580eb2e7aa0364d6f5f",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"first_name\" : \"Test\", \n\"no_middle_name\" : null, \n\"middle_name\" : \"L\", \n\"last_name\" :  \"Test\", \n\"email\" : \"test@msn.com\", \n\"zipcode\" : \"43567\", \n\"dob\" : \"1989-12-21\", \n\"ssn\" : \"111112002\", \n\"phone\" : null}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{Url}}/candidates",
+							"host": [
+								"{{Url}}"
+							],
+							"path": [
+								"candidates"
+							],
+							"query": [
+								{
+									"key": "auth",
+									"value": "216af8046659e9b213541580eb2e7aa0364d6f5f",
+									"disabled": true
+								}
+							]
+						},
+						"description": "01 creating candidateId by post request\r\nPre-condition:setup environment\r\nURL:\r\nTest Steps:\r\n1.verify to set up the variable as URL in the QA Environment\r\nExpected: URL initial value:Https://api.checkr.com\r\n2.verify Post call endpoint\r\nExpected: {{URL}}/candidate as endpoint\r\n3.verify payload should be in json format and unique SSN number should passed in every payload \r\nExpected: SSN\r\n{\r\n    \"first_name\" : \"Test\", \r\n\"no_middle_name\" : null, \r\n\"middle_name\" : \"L\", \r\n\"last_name\" :  \"Test\", \r\n\"email\" : \"test@msn.com\", \r\n\"zipcode\" : \"43567\", \r\n\"dob\" : \"1989-12-21\", \r\n\"ssn\" : \"111112002\", \r\n\"phone\" : null\r\n}\r\n4. verify response should be in json format and should create unique candidate Id:\r\nExpected result: candidate ID created \r\nid\": \"07ef4b4f22b46a3a27493b26\r\n{\r\n    \"id\": \"07ef4b4f22b46a3a27493b26\",\r\n    \"object\": \"test_candidate\",\r\n    \"uri\": \"/v1/candidates/07ef4b4f22b46a3a27493b26\",\r\n    \"created_at\": \"2021-03-01T19:25:40Z\",\r\n    \"first_name\": \"Test\",\r\n    \"last_name\": \"Test\",\r\n    \"middle_name\": \"L\",\r\n    \"mother_maiden_name\": null,\r\n    \"dob\": \"1989-12-21\",\r\n    \"ssn\": \"XXX-XX-2002\",\r\n    \"email\": \"test@msn.com\",\r\n    \"zipcode\": \"43567\",\r\n    \"phone\": null,\r\n    \"driver_license_state\": null,\r\n    \"driver_license_number\": null,\r\n    \"copy_requested\": false,\r\n    \"previous_driver_license_state\": null,\r\n    \"previous_driver_license_number\": null,\r\n    \"adjudication\": null,\r\n    \"custom_id\": null,\r\n    \"no_middle_name\": false,\r\n    \"updated_at\": \"2021-03-01T19:25:40Z\",\r\n    \"report_ids\": [],\r\n    \"geo_ids\": []\r\n}\r\n5. verify the HTTPs status code as 201 created\r\nExpected:status code 201 created\r\n6. verify the turnaround time as 90ms\r\nExpected: \r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n"
+					},
+					"response": []
+				},
+				{
+					"name": "CreateCandidateReport",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"bodyData=JSON.parse(responseBody)\r",
+									"report_id=bodyData.id\r",
+									"ssn_id=bodyData.ssn_trace_id\r",
+									"sexoffender_id=bodyData.sex_offender_search_id\r",
+									"criminal_id = bodyData.national_criminal_search_id\r",
+									"globalwatch_id=bodyData.global_watchlist_search_id\r",
+									"console.log(report_id)\r",
+									"\r",
+									"pm.environment.set(\"pass-report-id\", report_id);\r",
+									"pm.environment.set(\"pass-ssn-id\", ssn_id);\r",
+									"pm.environment.set(\"pass-sexoffender-id\", sexoffender_id);\r",
+									"pm.environment.set(\"pass-criminal-id\", criminal_id);\r",
+									"pm.environment.set(\"pass-globalwatch-id\", globalwatch_id);\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "{{Password1}}",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{Username1}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"package\" : \"tasker_standard\", \n\"candidate_id\" : \"{{pass-candidate-id}}\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{Url}}/reports",
+							"host": [
+								"{{Url}}"
+							],
+							"path": [
+								"reports"
+							]
+						},
+						"description": "01 Creating candidate Report by post request\r\nPre-condition:setup environment\r\nURL:\r\npass-candidateID:\r\nTest Steps:\r\n1.verify to set up the variable as URL in the QA Environment\r\nExpected: URL initial value:Https://api.checkr.com\r\n\r\n2. verify candidate id should be in the QA Envirenment\r\nExpected: pass-candidateId:\"07ef4b4f22b46a3a27493b26\"\r\n\r\n3. verify Post call endpoint/resource\r\nExpected: {{URL}}/Report as endpoint\r\n3.verify payload should be in json format and correct candidate id should be in payload\r\nExpected: candidate Id\r\n{\r\n    \"package\" : \"tasker_standard\", \r\n\"candidate_id\" : \"{{pass-candidate-id}}\"\r\n}\r\n\r\n4. verify response should be in json format and should create Report Id in response\r\nExpected result: report Id created \r\nid\": \"065e00ff5cfd0381f6284b35\"\r\n{\r\n    \"id\": \"065e00ff5cfd0381f6284b35\",\r\n    \"object\": \"test_report\",\r\n    \"uri\": \"/v1/reports/065e00ff5cfd0381f6284b35\",\r\n    \"status\": \"pending\",\r\n    \"created_at\": \"2021-03-01T19:51:43Z\",\r\n    \"completed_at\": null,\r\n    \"revised_at\": null,\r\n    \"upgraded_at\": null,\r\n    \"turnaround_time\": null,\r\n    \"due_time\": \"2021-03-09T19:51:43Z\",\r\n    \"package\": \"tasker_standard\",\r\n    \"tags\": [],\r\n    \"adjudication\": null,\r\n    \"assessment\": null,\r\n    \"source\": \"api\",\r\n    \"estimated_completion_time\": null,\r\n    \"candidate_id\": \"07ef4b4f22b46a3a27493b26\",\r\n    \"candidate_story_ids\": [],\r\n    \"county_criminal_search_ids\": [],\r\n    \"municipal_criminal_search_ids\": [],\r\n    \"document_ids\": [],\r\n    \"federal_criminal_search_id\": null,\r\n    \"global_watchlist_search_id\": \"603d45cf3bcf45000ce1c9cd\",\r\n    \"national_criminal_search_id\":   \"603d45cf3bcf45000ce1c9cb\",\r\n    \"personal_reference_verification_ids\": [],\r\n    \"professional_reference_verification_ids\": [],\r\n    \"sex_offender_search_id\": \"603d45cf3bcf45000ce1c9cc\",\r\n    \"ssn_trace_id\": \"603d45cf3bcf45000ce1c9c7\",\r\n    \"state_criminal_search_ids\": [],\r\n    \"pointer_state_criminal_search_ids\": [],\r\n    \"terrorist_watchlist_search_id\": \"603d45cf3bcf45000ce1c9cd\",\r\n    \"facis_search_id\": null,\r\n    \"arrest_search_id\": null,\r\n    \"motor_vehicle_report_id\": null,\r\n    \"self_disclosure_ids\": [],\r\n    \"professional_license_verification_ids\": []\r\n}\r\n5. verify response should have Id for \r\nSSN_Trace\r\nSex_offender\r\nglobal_watchlist\r\nNational_criminal_searches\r\nExpected:valid Ids created for all the fields.\r\n5. verify the HTTPs status code as 201 created\r\nExpected:status code 201 created\r\n6. verify the turnaround time as 90ms\r\nExpected: \r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n"
+					},
+					"response": []
+				}
+			],
+			"description": "All Post request and response"
+		},
+		{
+			"name": "Get ",
+			"item": [
+				{
+					"name": "ReportResponseObject",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "{{Password1}}",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{Username1}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{Urlreports}}{{pass-report-id}}",
+							"host": [
+								"{{Urlreports}}{{pass-report-id}}"
+							]
+						},
+						"description": "Pre-condition:setup environment\r\nEndpoint url:https://api.checkr.com/v1/reports/\r\n\r\nTest Steps:\r\n1.verify to set up the variable as Urlreports in the QA Environment\r\nExpected: Urlreports initial value:https://api.checkr.com/vi/reports\r\n2. verify report should be in the QA Environment\r\nExpected: pass-:\"07ef4b4f22b46a3a27493b26\"\r\n2.verify Get request endpoint/resource\r\nExpected: {{URL}}/Report as endpoint\r\n3.verify Get request should be in json format and correct candidate id should be in payload\r\nExpected: candidate Id\r\n{\r\n    \"package\" : \"tasker_standard\", \r\n\"candidate_id\" : \"{{pass-candidate-id}}\"\r\n}\r\n\r\n4. verify response should be in json format and should create Report Id in response\r\nExpected result: report Id created \r\nid\": \"065e00ff5cfd0381f6284b35\"\r\n{\r\n    \"id\": \"065e00ff5cfd0381f6284b35\",\r\n    \"object\": \"test_report\",\r\n    \"uri\": \"/v1/reports/065e00ff5cfd0381f6284b35\",\r\n    \"status\": \"pending\",\r\n    \"created_at\": \"2021-03-01T19:51:43Z\",\r\n    \"completed_at\": null,\r\n    \"revised_at\": null,\r\n    \"upgraded_at\": null,\r\n    \"turnaround_time\": null,\r\n    \"due_time\": \"2021-03-09T19:51:43Z\",\r\n    \"package\": \"tasker_standard\",\r\n    \"tags\": [],\r\n    \"adjudication\": null,\r\n    \"assessment\": null,\r\n    \"source\": \"api\",\r\n    \"estimated_completion_time\": null,\r\n    \"candidate_id\": \"07ef4b4f22b46a3a27493b26\",\r\n    \"candidate_story_ids\": [],\r\n    \"county_criminal_search_ids\": [],\r\n    \"municipal_criminal_search_ids\": [],\r\n    \"document_ids\": [],\r\n    \"federal_criminal_search_id\": null,\r\n    \"global_watchlist_search_id\": \"603d45cf3bcf45000ce1c9cd\",\r\n    \"national_criminal_search_id\":   \"603d45cf3bcf45000ce1c9cb\",\r\n    \"personal_reference_verification_ids\": [],\r\n    \"professional_reference_verification_ids\": [],\r\n    \"sex_offender_search_id\": \"603d45cf3bcf45000ce1c9cc\",\r\n    \"ssn_trace_id\": \"603d45cf3bcf45000ce1c9c7\",\r\n    \"state_criminal_search_ids\": [],\r\n    \"pointer_state_criminal_search_ids\": [],\r\n    \"terrorist_watchlist_search_id\": \"603d45cf3bcf45000ce1c9cd\",\r\n    \"facis_search_id\": null,\r\n    \"arrest_search_id\": null,\r\n    \"motor_vehicle_report_id\": null,\r\n    \"self_disclosure_ids\": [],\r\n    \"professional_license_verification_ids\": []\r\n}\r\n5. verify response should have Id for \r\nSSN_Trace\r\nSex_offender\r\nglobal_watchlist\r\nNational_criminal_searches\r\nExpected:valid Ids created for all the fields.\r\n5. verify the HTTPs status code as 201 created\r\nExpected:status code 201 created\r\n6. verify the turnaround time as 90ms\r\nExpected: \r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n"
+					},
+					"response": []
+				},
+				{
+					"name": "SSNTrace",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "{{Password1}}",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{Username1}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{UrlSSN}}{{pass-ssn-id}}",
+							"host": [
+								"{{UrlSSN}}{{pass-ssn-id}}"
+							]
+						},
+						"description": "04 verify to get the information for SSN_object_traces from get request by passing SSN_Idby post request\r\nPre-condition:setup environment\r\nEndPoint:https://api.checkr.com/v1/ssn_traces/603d45cf3bcf45000ce1c9c7\r\nAuthorization\r\n\r\nTest Steps:\r\n1. verify to set up the  initial value of variable as UrlSSN in the QA Environment\r\nExpected: UrlSSN initial value:https://api.checkr.com/v1/ssn_traces\r\n2. verify correct SSN_trace_ID should be taken from candidate report post request. \r\nExpected: SSN_trace_ID:\"603d45cf3bcf45000ce1c9c7\"\r\n3. verify pass-ssn-id should be the current value in the QA Environment\r\nExpected: pass-ssn-id:\"603d45cf3bcf45000ce1c9c7\"\r\n4. verify Get request endpoint/resource\r\nExpected: UrlSSN/pass-ssn-id as endpoint\r\n3.verify response should be in json format and should give information related to SSN\r\nExpected: response\r\n{\r\n    \"id\": \"603d45cf3bcf45000ce1c9c7\",\r\n    \"object\": \"test_ssn_trace\",\r\n    \"uri\": \"/v1/ssn_traces/603d45cf3bcf45000ce1c9c7\",\r\n    \"status\": \"clear\",\r\n    \"created_at\": \"2014-04-23T02:33:15Z\",\r\n    \"completed_at\": \"2014-04-23T02:33:25Z\",\r\n    \"turnaround_time\": 10,\r\n    \"ssn\": \"XXX-XX-2002\",\r\n    \"no_data\": false,\r\n    \"dob_mismatch\": false,\r\n    \"name_mismatch\": false,\r\n    \"fake_ssn\": false,\r\n    \"aliases\": [],\r\n    \"data_mismatch\": false,\r\n    \"thin_file\": false,\r\n    \"invalid_issuance_year\": false,\r\n    \"death_index\": false,\r\n    \"ssn_already_taken\": false,\r\n    \"issued_year\": null,\r\n    \"issued_state\": null,\r\n    \"addresses\": [\r\n        {\r\n            \"street\": \"450 Emmy Crossroad\",\r\n            \"unit\": \"Suite 483\",\r\n            \"city\": \"North Mafaldaton\",\r\n            \"state\": \"ID\",\r\n            \"zipcode\": \"17325\",\r\n            \"county\": \"Adams\",\r\n            \"from_date\": \"2011-01-02\",\r\n            \"to_date\": \"2014-04-01\"\r\n        },\r\n        {\r\n            \"street\": \"804 Lueilwitz Skyway\",\r\n            \"unit\": \"Apt. 056\",\r\n            \"city\": \"Port Joannyview\",\r\n            \"state\": \"MO\",\r\n            \"zipcode\": \"38875\",\r\n            \"county\": \"County Antrim\",\r\n            \"from_date\": \"2007-07-02\",\r\n            \"to_date\": \"2011-01-01\"\r\n        }\r\n]\r\n}\r\n4. verify pass-ssn-id should be the current value in the QA Environment\r\nExpected: pass-ssn-id:\"603d45cf3bcf45000ce1c9c7\"\r\n5. verify the http satus code for get request\r\nExpected: 200 status code is generated\r\n6. verify the turnaround time \r\n\r\n\r\n"
+					},
+					"response": []
+				},
+				{
+					"name": "SexOffender",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "{{Password1}}",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{Username1}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{UrlSexOffender}}{{pass-sexoffender-id}}",
+							"host": [
+								"{{UrlSexOffender}}{{pass-sexoffender-id}}"
+							]
+						},
+						"description": "verify  information for sex_offender_searches from get request by passing sex offender Id by calling reportId APi\r\nPre-condition:setup environment\r\nEndPoint:https://api.checkr.com/v1/sex_offender_searches/\r\nAuthorization\r\n \r\nTest Steps:\r\n1. verify the initial value of variable as Urlsexoffender in the QA Environment\r\nExpected: Urlsexoffender initial value:https://api.checkr.com/v1/sex_offender_searches \r\n2. verify correct sex_offender_search_Id should be taken from CandidateReport post request. \r\nExpected: sex_offender_search_ID:\"603d45cf3bcf45000ce1c9cc\"\r\n3. verify pass-sexoffender-id should be the current value in the QA Environment\r\nExpected: pass-sexoffender-id:\"603d45cf3bcf45000ce1c9cc\"\r\n4. verify Get request endpoint/resource\r\nExpected: Urlsexoffender/pass-sexoffender-id as endpoint\r\n3.verify response should be in json format and should give information related to sexoffender\r\nExpected: response\r\n{\r\n    \"id\": \"603d45cf3bcf45000ce1c9cc\",\r\n    \"object\": \"test_sex_offender_search\",\r\n    \"uri\": \"/v1/sex_offender_searches/603d45cf3bcf45000ce1c9cc\",\r\n    \"status\": \"consider\",\r\n    \"created_at\": \"2014-06-25T20:12:54Z\",\r\n    \"completed_at\": \"2014-06-25T20:12:57Z\",\r\n    \"turnaround_time\": 3,\r\n    \"records\": [\r\n        {\r\n            \"registry\": \"PA SEX OFFENDER REGISTRY\",\r\n            \"full_name\": \"STEVEN EDWARD SHERMAN\",\r\n            \"age\": null,\r\n            \"dob\": null,\r\n            \"registration_start\": null,\r\n            \"registration_end\": null,\r\n            \"state\": null\r\n        }\r\n    ]\r\n}\r\n\r\n4. verify pass-sexoffender-id should be the current value in the QA Environment\r\nExpected: pass-sexoffender-id:\"603d45cf3bcf45000ce1c9cc\"\r\n5. verify the http satus code for get request\r\nExpected: 200 status code is generated\r\n6. verify the turnaround time \r\n\r\n\r\n"
+					},
+					"response": []
+				},
+				{
+					"name": "GlobalWatchList",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "{{Password1}}",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{Username1}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{UrlGlobalWatch}}{{pass-globalwatch-id}}",
+							"host": [
+								"{{UrlGlobalWatch}}{{pass-globalwatch-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "NationalCrimeSearch",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "{{Password1}}",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{Username1}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{UrlNationalCrime}}{{pass-criminal-id}}",
+							"host": [
+								"{{UrlNationalCrime}}{{pass-criminal-id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "API GET request and response \r\n",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

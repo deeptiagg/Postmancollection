@@ -1,0 +1,79 @@
+{
+	"id": "808d31f4-9779-4226-9602-94e414d117c3",
+	"name": "QA",
+	"values": [
+		{
+			"key": "Url",
+			"value": "https://api.checkr.com/v1",
+			"enabled": true
+		},
+		{
+			"key": "pass-candidate-id",
+			"value": "1AB",
+			"enabled": true
+		},
+		{
+			"key": "pass-report-id",
+			"value": "2AB",
+			"enabled": true
+		},
+		{
+			"key": "pass-ssn-id",
+			"value": "3AB",
+			"enabled": true
+		},
+		{
+			"key": "pass-sexoffender-id",
+			"value": "4AB",
+			"enabled": true
+		},
+		{
+			"key": "pass-criminal-id",
+			"value": "5AB",
+			"enabled": true
+		},
+		{
+			"key": "pass-globalwatch-id",
+			"value": "6AB",
+			"enabled": true
+		},
+		{
+			"key": "Urlreports",
+			"value": "https://api.checkr.com/v1/reports/",
+			"enabled": true
+		},
+		{
+			"key": "UrlSSN",
+			"value": "https://api.checkr.com/v1/ssn_traces/",
+			"enabled": true
+		},
+		{
+			"key": "UrlSexOffender",
+			"value": "https://api.checkr.com/v1/sex_offender_searches/",
+			"enabled": true
+		},
+		{
+			"key": "UrlGlobalWatch",
+			"value": "https://api.checkr.com/v1/global_watchlist_searches/",
+			"enabled": true
+		},
+		{
+			"key": "UrlNationalCrime",
+			"value": "https://api.checkr.com/v1/national_criminal_searches/",
+			"enabled": true
+		},
+		{
+			"key": "Username1",
+			"value": "216af8046659e9b213541580eb2e7aa0364d6f5f",
+			"enabled": true
+		},
+		{
+			"key": "Password1",
+			"value": "",
+			"enabled": true
+		}
+	],
+	"_postman_variable_scope": "environment",
+	"_postman_exported_at": "2021-03-04T19:35:20.358Z",
+	"_postman_exported_using": "Postman/7.36.5"
+}
